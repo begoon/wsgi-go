@@ -31,7 +31,7 @@ func ProcessHandler(c echo.Context) error {
 	n, _ := strconv.Atoi(c.Param("n"))
 	duration, _ := strconv.Atoi(c.Param("duration"))
 
-	p := Process{Duration: time.Duration(duration) * time.Second, N: n}
+	p := Process{Duration: time.Duration(duration) * time.Millisecond, N: n}
 
 	time.Sleep(p.Duration)
 	return c.JSON(http.StatusOK, p)

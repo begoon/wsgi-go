@@ -35,7 +35,7 @@ func Serve() {
 
 	r.GET("/process/:n/:duration", ProcessHandler).
 		AddParamPath(int(0), "n", "process id").
-		AddParamPath(int(0), "duration", "time in seconds").
+		AddParamPath(int(0), "duration", "time in milliseconds").
 		AddResponse(http.StatusOK, "successful", Process{}, nil)
 
 	r.SetScheme("https", "http")
