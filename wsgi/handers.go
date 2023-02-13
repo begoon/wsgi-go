@@ -1,7 +1,6 @@
 package wsgi
 
 import (
-	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,12 +13,7 @@ type Health struct {
 }
 
 func HealthHandler(c echo.Context) error {
-	h := Health{Version: "0.0.0"}
-	if err := c.Bind(h); err != nil {
-		return err
-	}
-	time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
-	return c.JSON(http.StatusOK, h)
+	return c.JSON(http.StatusOK, Health{Version: "0.0.0"})
 }
 
 type Process struct {
@@ -35,4 +29,18 @@ func ProcessHandler(c echo.Context) error {
 
 	time.Sleep(p.Duration)
 	return c.JSON(http.StatusOK, p)
+}
+
+type User struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
+func AddUserHandler(c echo.Context) error {
+	u := &User{}
+	if err := c.Bind(u); err != nil {
+		return err
+	}
+	u.Id = c.Response().Header().Get("X-Request-Id")
+	return c.JSON(http.StatusCreated, u)
 }

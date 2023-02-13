@@ -26,7 +26,10 @@ func MakeRequest(url string, i int, ch chan<- string) {
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 
-	ch <- fmt.Sprintf("%d %.2f elapsed with response length: %d %s\n%s", i, secs, len(body), url, string(body))
+	ch <- fmt.Sprintf(
+		"%d %.2f elapsed with response length: %d %s\n%s", i, secs, len(body),
+		url, string(body),
+	)
 }
 
 func Connect() {
