@@ -8,12 +8,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const Version = "0.0.1"
+
 type Health struct {
 	Version string `json:"version"`
 }
 
 func HealthHandler(c echo.Context) error {
-	return c.JSON(http.StatusOK, Health{Version: "0.0.0"})
+	return c.JSON(http.StatusOK, Health{Version: Version})
 }
 
 type Process struct {

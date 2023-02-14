@@ -24,7 +24,7 @@ func TestHealth(t *testing.T) {
 		if err := json.Unmarshal(rec.Body.Bytes(), &actual); err != nil {
 			panic(err)
 		}
-		assert.Equal(t, actual, Health{Version: "0.0.0"})
+		assert.Equal(t, actual, Health{Version: Version})
 	}
 }
 

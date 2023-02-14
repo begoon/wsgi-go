@@ -35,6 +35,16 @@ func printFS(prefix string, fs embed.FS) {
 	}
 }
 
+func requestDumper(c echo.Context, reqBody, resBody []byte) {
+	id := c.Response().Header()["X-Request-Id"][0]
+	fmt.Printf("REQUEST  [%s] [%v]\n", id, string(reqBody))
+	fmt.Printf("RESPONSE [%s] [%v]\n\n", id, strings.TrimSpace(string(resBody)))
+}
+
+func requestDumperSkipper(c echo.Context) bool {
+	return !strings.Contains(c.Request().RequestURI, "/api")
+}
+
 func Serve() {
 	e := echo.New()
 
@@ -48,10 +58,9 @@ func Serve() {
 
 	e.StaticFS("/", echo.MustSubFS(root, "root"))
 
-	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		id := c.Response().Header()["X-Request-Id"][0]
-		fmt.Printf("REQUEST  [%s] [%v]\n", id, string(reqBody))
-		fmt.Printf("RESPONSE [%s] [%v]\n\n", id, strings.TrimSpace(string(resBody)))
+	e.Use(middleware.BodyDumpWithConfig(middleware.BodyDumpConfig{
+		Skipper: requestDumperSkipper,
+		Handler: requestDumper,
 	}))
 
 	e.GET("/api", func(c echo.Context) error {
@@ -59,8 +68,7 @@ func Serve() {
 	})
 
 	r.GET("/api/health", HealthHandler).
-		AddParamBody(Health{}, "body", "User input struct", true).
-		AddResponse(http.StatusOK, "successful", nil, nil)
+		AddResponse(http.StatusOK, "successful", Health{}, nil)
 
 	r.GET("/api/process/:n/:duration", ProcessHandler).
 		AddParamPath(int(0), "n", "process id").
@@ -69,7 +77,7 @@ func Serve() {
 
 	r.POST("/api/user", AddUserHandler).
 		AddParamBody(User{}, "body", "User object", true).
-		AddResponse(http.StatusCreated, "successful", nil, nil)
+		AddResponse(http.StatusCreated, "created successfully", nil, nil)
 
 	r.SetScheme("https", "http")
 	r.SetResponseContentType("application/json")
