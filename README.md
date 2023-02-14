@@ -1,6 +1,6 @@
 # Experimental code for Chiro API in Golang
 
-The endpoint is built and deployed automatically when its `main` branch in pushed.
+The endpoint is built and deployed automatically when its `main` branch is pushed.
 
 <https://chiro-api-go-ixozpwh3jq-nw.a.run.app>
 
