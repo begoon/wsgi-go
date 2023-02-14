@@ -35,7 +35,7 @@ func ProcessHandler(c echo.Context) error {
 
 type User struct {
 	Id   string `json:"id"`
-	Name string `json:"name"`
+	Name string `json:"name" swagger:"required"`
 }
 
 func AddUserHandler(c echo.Context) error {

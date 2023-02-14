@@ -25,3 +25,7 @@ docker-tag:
 
 docker-push:
 	docker push europe-docker.pkg.dev/iproov-chiro/chiro/chiro-api-go:latest
+
+push:
+	git push origin main
+	git push iproov main

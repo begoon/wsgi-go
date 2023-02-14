@@ -54,7 +54,11 @@ func requestDumperSkipper(c echo.Context) bool {
 func Serve() {
 	e := echo.New()
 
-	r := echoswagger.New(e, "/api/docs", nil)
+	r := echoswagger.New(e, "/api/docs", &echoswagger.Info{
+		Title:   "Chiro API",
+		Version: Version,
+	})
+	r.AddSecurityAPIKey("api_key", "", echoswagger.SecurityInHeader)
 
 	e.HideBanner = true
 	e.Use(middleware.RequestID())
@@ -85,8 +89,10 @@ func Serve() {
 		AddParamBody(User{}, "body", "User object", true).
 		AddResponse(http.StatusCreated, "created successfully", nil, nil)
 
-	r.SetScheme("https", "http")
-	r.SetResponseContentType("application/json")
+	r.
+		SetScheme("https", "http").
+		SetResponseContentType("application/json").
+		SetRequestContentType("application/json")
 
 	var port string
 	port, given := os.LookupEnv("PORT")
