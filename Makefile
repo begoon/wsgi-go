@@ -14,3 +14,6 @@ build:
 
 client:
 	go run cmd/main.go cmd/client.go 100 http://127.0.0.1:8000/api/process
+
+test:
+	go test ./wsgi
