@@ -1,6 +1,7 @@
 package wsgi
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"os"
@@ -41,7 +42,7 @@ func requestDumper(c echo.Context, reqBody, resBody []byte) {
 	log.Info().
 		Str("id", id).
 		RawJSON("request", reqBody).
-		RawJSON("response", resBody).
+		RawJSON("response", bytes.TrimSpace(resBody)).
 		Msgf("REQUEST/RESPONSE")
 }
 
