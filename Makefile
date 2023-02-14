@@ -4,7 +4,7 @@ serve:
 	go run cmd/main.go cmd/client.go serve
 
 docker-build:
-	docker build -t wsgi-go .
+	docker build -t wsgi-go --platform linux/amd64 .
 	
 docker-run:
 	docker run -it --rm -p 8000:80 -e PORT=80 wsgi-go
@@ -17,3 +17,9 @@ client:
 
 test:
 	go test ./wsgi
+
+docker-tag:
+	docker tag wsgi-go europe-docker.pkg.dev/iproov-chiro/chiro/chiro-api-go:latest
+
+docker-push:
+	docker push europe-docker.pkg.dev/iproov-chiro/chiro/chiro-api-go:latest

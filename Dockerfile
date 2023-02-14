@@ -12,7 +12,9 @@ COPY ./ ./
 
 RUN CGO_ENABLED=0 go test -v ./wsgi
 
-RUN CGO_ENABLED=0 go build -installsuffix 'static' -o /server ./cmd
+RUN \
+    GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+    go build -installsuffix 'static' -o /server ./cmd
 
 FROM gcr.io/distroless/static AS final
 
