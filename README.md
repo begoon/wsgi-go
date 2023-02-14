@@ -14,7 +14,7 @@ To try out the following technologies:
 - [x] Go [Echo](https://echo.labstack.com/) web framework
 - [x] Echo middleware:
   - [ ] JWT injection/handling
-  - [ ] WebSocket
+  - [ ] WebSockets
   - [x] unique request id injection
   - [x] logger
     - [x] line-based
@@ -24,6 +24,6 @@ To try out the following technologies:
   - [x] redirect
   - [x] trailing slash
 - [x] Automatic Swagger/OpenAPI documentation with [EchoSwagger](https://pkg.go.dev/github.com/pangpanglabs/echoswagger/v2)
-- [x] Dockerize Go applications to tiny images with scratch or distroless based image. The current image size is only 13MB. The image literally contains one single statically linked application, which embeds everything, including static file or/and a built-in website.
-- [x] stress-test the endpoint (up to 5000 concurrent requests) via a test `client.go`
+- [x] Dockerize Go applications to tiny images from `scratch` or `distroless` based image. The current final endpoint deployment image size is only 13MB. The image literally contains one single statically linked executable, which embeds everything, including static file or/and a built-in website.
+- [x] stress-test the endpoint (up to 5000 concurrent requests) via a concurrent test client `client.go`
 - [ ] MongoDB integration
