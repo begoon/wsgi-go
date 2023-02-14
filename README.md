@@ -6,7 +6,7 @@ The endpoint is built and deployed automatically when its `main` branch is pushe
 
 ## Goals
 
-To try out the following technologies:
+To try out the following technologies (the list is being updated frequently):
 
 - [x] REST API development in Go
   - [x] unit testing (running test within the image build process under docker)
