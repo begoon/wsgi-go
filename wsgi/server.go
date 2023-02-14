@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pangpanglabs/echoswagger/v2"
+	"github.com/rs/zerolog/log"
 )
 
 //go:embed root/*
@@ -37,12 +38,16 @@ func printFS(prefix string, fs embed.FS) {
 
 func requestDumper(c echo.Context, reqBody, resBody []byte) {
 	id := c.Response().Header()["X-Request-Id"][0]
-	fmt.Printf("REQUEST  [%s] [%v]\n", id, string(reqBody))
-	fmt.Printf("RESPONSE [%s] [%v]\n\n", id, strings.TrimSpace(string(resBody)))
+	log.Info().
+		Str("id", id).
+		RawJSON("request", reqBody).
+		RawJSON("response", resBody).
+		Msgf("REQUEST/RESPONSE")
 }
 
 func requestDumperSkipper(c echo.Context) bool {
-	return !strings.Contains(c.Request().RequestURI, "/api")
+	u := c.Request().RequestURI
+	return !strings.Contains(u, "/api") || strings.Contains(u, "/docs")
 }
 
 func Serve() {
