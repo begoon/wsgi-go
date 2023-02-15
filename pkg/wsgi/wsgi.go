@@ -2,6 +2,7 @@ package wsgi
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -42,9 +43,13 @@ func printFS(prefix string, fs embed.FS) {
 
 func requestDumper(c echo.Context, reqBody, resBody []byte) {
 	id := c.Response().Header()["X-Request-Id"][0]
+	req := map[string]interface{}{}
+	if err := json.Unmarshal(reqBody, &req); err != nil {
+		panic(err)
+	}
 	log.Info().
 		Str("id", id).
-		RawJSON("request", reqBody).
+		Interface("request", req).
 		RawJSON("response", bytes.TrimSpace(resBody)).
 		Msgf("REQUEST/RESPONSE")
 }
