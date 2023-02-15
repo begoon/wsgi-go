@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const Version = "0.0.1"
+const Version = "0.0.2"
 
 type Health struct {
 	Version string `json:"version"`
@@ -34,7 +34,7 @@ func ProcessHandler(c echo.Context) error {
 }
 
 type User struct {
-	Id   string `json:"id"`
+	Id   string `json:"id,omitempty"`
 	Name string `json:"name" swagger:"required"`
 }
 

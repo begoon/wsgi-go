@@ -32,8 +32,24 @@ func MakeRequest(url string, i int, ch chan<- string) {
 	)
 }
 
+func Must[T interface{}](r T, err error) T {
+	if err != nil {
+		panic(err)
+	}
+	return r
+}
+
 func Connect() {
 	runtime.GOMAXPROCS(1)
+
+	if len(os.Args) > 3 && os.Args[1] == "user" {
+		PostUserClient()
+	}
+
+	if len(os.Args) > 3 && os.Args[1] == "ws" {
+		WebSocketClient()
+	}
+
 	start := time.Now()
 	ch := make(chan string)
 	url := os.Args[2]

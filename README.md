@@ -14,7 +14,7 @@ To try out the following technologies (the list is being updated frequently):
 - [x] Go [Echo](https://echo.labstack.com/) web framework
 - [x] Echo middleware:
   - [ ] JWT injection/handling
-  - [ ] WebSockets
+  - [x] WebSockets
   - [x] unique request id injection
   - [x] logger
     - [x] line-based

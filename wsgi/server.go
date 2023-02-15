@@ -89,6 +89,9 @@ func Serve() {
 		AddParamBody(User{}, "body", "User object", true).
 		AddResponse(http.StatusCreated, "created successfully", nil, nil)
 
+	r.GET("/api/ws/:cid", WebSocketHandler).
+		AddParamPath(string(""), "cid", "client id")
+
 	r.
 		SetScheme("https", "http").
 		SetResponseContentType("application/json").
