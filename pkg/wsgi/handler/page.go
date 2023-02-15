@@ -1,16 +1,21 @@
-package wsgi
+package handler
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"html/template"
 	"net/http"
 
+	"github.com/begoon/wsgi-go/pkg/util"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
 
 var tmpls *template.Template
+
+//go:embed templates/*
+var templates embed.FS
 
 func PageHandler(c echo.Context) error {
 	page := c.Param("page")
@@ -19,7 +24,7 @@ func PageHandler(c echo.Context) error {
 	v := struct{ Version string }{Version}
 
 	if tmpls == nil {
-		tmpls = Must(template.ParseFS(templates, "templates/*"))
+		tmpls = util.Must(template.ParseFS(templates, "templates/*"))
 	}
 
 	var b bytes.Buffer

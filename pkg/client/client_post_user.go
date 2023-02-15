@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/begoon/wsgi-go/pkg/wsgi"
+	"github.com/begoon/wsgi-go/pkg/wsgi/handler"
 )
 
 func PostUserClient() {
@@ -17,7 +17,7 @@ func PostUserClient() {
 	url := strings.TrimSuffix(host, "/") + "/api/user"
 	fmt.Printf("- post user %s to %s\n", name, url)
 
-	request := wsgi.User{Name: name}
+	request := handler.User{Name: name}
 	fmt.Printf("- request [%v]\n", request)
 
 	raw := Must(json.Marshal(request))

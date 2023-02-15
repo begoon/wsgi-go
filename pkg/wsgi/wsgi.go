@@ -3,13 +3,14 @@ package wsgi
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
 	"embed"
 
+	"github.com/begoon/wsgi-go/pkg/util"
+	"github.com/begoon/wsgi-go/pkg/wsgi/handler"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/pangpanglabs/echoswagger/v2"
@@ -19,33 +20,13 @@ import (
 //go:embed root/*
 var root embed.FS
 
-//go:embed templates/*
-var templates embed.FS
-
-func printFS(prefix string, fs embed.FS) {
-	if p, err := fs.ReadDir(prefix); err == nil {
-		for _, f := range p {
-			info, err := f.Info()
-			if err != nil {
-				panic(fmt.Sprintf("unable to read info of %v", f))
-			}
-			path := prefix + "/" + f.Name()
-			if info.IsDir() {
-				printFS(path, fs)
-			} else {
-				fmt.Printf("%v (%d)\n", path, info.Size())
-			}
-		}
-	} else {
-		panic("embed files not found")
-	}
-}
-
 func requestDumper(c echo.Context, reqBody, resBody []byte) {
 	id := c.Response().Header()["X-Request-Id"][0]
 	req := map[string]interface{}{}
-	if err := json.Unmarshal(reqBody, &req); err != nil {
-		panic(err)
+	if len(reqBody) > 0 {
+		if err := json.Unmarshal(reqBody, &req); err != nil {
+			panic(err)
+		}
 	}
 	log.Info().
 		Str("id", id).
@@ -59,21 +40,51 @@ func requestDumperSkipper(c echo.Context) bool {
 	return !strings.Contains(u, "/api") || strings.Contains(u, "/docs")
 }
 
-func Serve() {
+var opened = []string{"/health", "/process"}
+
+const apiKey = "secret"
+
+func apiKeyValidator(key string, c echo.Context) (bool, error) {
+	return key == apiKey, nil
+}
+
+func apiKeySkipper(c echo.Context) bool {
+	u := c.Request().URL.RequestURI()
+	for _, e := range opened {
+		if strings.Contains(u, e) {
+			return true
+		}
+	}
+	return false
+}
+
+func Serve(version string) {
+	handler.Version = version
+
 	e := echo.New()
 
 	r := echoswagger.New(e, "/api/docs", &echoswagger.Info{
 		Title:   "Chiro API",
-		Version: Version,
-	})
-	r.AddSecurityAPIKey("api_key", "", echoswagger.SecurityInHeader)
+		Version: version,
+	}).
+		SetScheme("https", "http").
+		SetResponseContentType("application/json").
+		SetRequestContentType("application/json")
+
+	e.Use(middleware.KeyAuthWithConfig(middleware.KeyAuthConfig{
+		KeyLookup: "header:X-Api-Key",
+		Validator: apiKeyValidator,
+		Skipper:   apiKeySkipper,
+	}))
+
+	r.AddSecurityAPIKey("X-Api-Key", "", echoswagger.SecurityInHeader)
 
 	e.HideBanner = true
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	printFS("root", root)
+	util.PrintFS("root", root)
 
 	e.StaticFS("/", echo.MustSubFS(root, "root"))
 
@@ -86,33 +97,28 @@ func Serve() {
 		return c.Redirect(http.StatusPermanentRedirect, "/api/docs")
 	})
 
-	r.GET("/api/health", HealthHandler).
-		AddResponse(http.StatusOK, "successful", Health{}, nil)
+	r.GET("/api/health", handler.HealthHandler).
+		AddResponse(http.StatusOK, "successful", handler.Health{}, nil)
 
-	r.GET("/api/process/:n/:duration", ProcessHandler).
+	r.GET("/api/process/:n/:duration", handler.ProcessHandler).
 		AddParamPath(int(0), "n", "process id").
 		AddParamPath(int(0), "duration", "time in milliseconds").
-		AddResponse(http.StatusOK, "successful", Process{}, nil)
+		AddResponse(http.StatusOK, "successful", handler.Process{}, nil)
 
-	r.POST("/api/user", AddUserHandler).
-		AddParamBody(User{}, "body", "User object", true).
+	r.POST("/api/user", handler.AddUserHandler).
+		AddParamBody(handler.User{}, "body", "User object", true).
 		AddResponse(http.StatusCreated, "created successfully", nil, nil)
 
-	r.GET("/api/ws/:cid", WebSocketHandler).
+	r.GET("/api/ws/:cid", handler.WebSocketHandler).
 		AddParamPath(string(""), "cid", "client id")
 
 	r.GET("/api/panic", func(c echo.Context) error {
 		panic("PANIC")
 	})
 
-	r.GET("/page/:page", PageHandler).
+	r.GET("/page/:page", handler.PageHandler).
 		AddParamPath(string(""), "page", "page path").
 		AddResponse(http.StatusOK, "successful", "", nil)
-
-	r.
-		SetScheme("https", "http").
-		SetResponseContentType("application/json").
-		SetRequestContentType("application/json")
 
 	var port string
 	port, given := os.LookupEnv("PORT")

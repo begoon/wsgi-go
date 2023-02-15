@@ -10,6 +10,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const Version = "1.0.0"
+
 func main() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
@@ -31,7 +33,7 @@ func main() {
 	serve := len(os.Args) == 1
 
 	if serve {
-		wsgi.Serve()
+		wsgi.Serve(Version)
 	} else {
 		client.Client()
 	}

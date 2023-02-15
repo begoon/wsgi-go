@@ -1,4 +1,4 @@
-package wsgi
+package util
 
 func Must[T any](r T, err error) T {
 	if err != nil {

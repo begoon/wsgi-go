@@ -8,12 +8,13 @@ The endpoint is built and deployed automatically when its `main` branch is pushe
 
 To try out the following technologies (the list is being updated frequently):
 
+- [ ] MongoDB integration
 - [x] REST API development in Go
   - [x] unit testing (running test within the image build process under docker)
-  - [x] parse the request parameters from the url and body (JSON)
+  - [x] parse the request parameters from the URL and body (JSON)
 - [x] Go [Echo](https://echo.labstack.com/) web framework
 - [x] Echo middleware:
-  - [ ] JWT injection/handling
+  - [x] API Key
   - [x] WebSockets
   - [x] unique request id injection
   - [x] logger
@@ -26,4 +27,3 @@ To try out the following technologies (the list is being updated frequently):
 - [x] Automatic Swagger/OpenAPI documentation with [EchoSwagger](https://pkg.go.dev/github.com/pangpanglabs/echoswagger/v2)
 - [x] Dockerize Go applications to tiny images from `scratch` or `distroless` based image. The current final endpoint deployment image size is only 13MB. The image literally contains one single statically linked executable, which embeds everything, including static file or/and a built-in website.
 - [x] stress-test the endpoint (up to 5000 concurrent requests) via a concurrent test client `client.go`
-- [ ] MongoDB integration

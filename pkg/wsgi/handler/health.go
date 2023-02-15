@@ -1,4 +1,4 @@
-package wsgi
+package handler
 
 import (
 	"net/http"
