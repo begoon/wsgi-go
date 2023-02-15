@@ -18,6 +18,9 @@ import (
 //go:embed root/*
 var root embed.FS
 
+//go:embed templates/*
+var templates embed.FS
+
 func printFS(prefix string, fs embed.FS) {
 	if p, err := fs.ReadDir(prefix); err == nil {
 		for _, f := range p {
@@ -63,6 +66,7 @@ func Serve() {
 	e.HideBanner = true
 	e.Use(middleware.RequestID())
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	printFS("root", root)
 
@@ -91,6 +95,14 @@ func Serve() {
 
 	r.GET("/api/ws/:cid", WebSocketHandler).
 		AddParamPath(string(""), "cid", "client id")
+
+	r.GET("/api/panic", func(c echo.Context) error {
+		panic("PANIC")
+	})
+
+	r.GET("/page/:page", PageHandler).
+		AddParamPath(string(""), "page", "page path").
+		AddResponse(http.StatusOK, "successful", "", nil)
 
 	r.
 		SetScheme("https", "http").

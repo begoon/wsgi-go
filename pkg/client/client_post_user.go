@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/begoon/wsgi-go/wsgi"
+	"github.com/begoon/wsgi-go/pkg/wsgi"
 )
 
 func PostUserClient() {

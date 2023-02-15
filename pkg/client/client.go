@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -32,14 +32,14 @@ func MakeRequest(url string, i int, ch chan<- string) {
 	)
 }
 
-func Must[T interface{}](r T, err error) T {
+func Must[T any](r T, err error) T {
 	if err != nil {
 		panic(err)
 	}
 	return r
 }
 
-func Connect() {
+func Client() {
 	runtime.GOMAXPROCS(1)
 
 	if len(os.Args) > 3 && os.Args[1] == "user" {
