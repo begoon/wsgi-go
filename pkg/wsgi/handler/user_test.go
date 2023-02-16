@@ -37,6 +37,7 @@ func TestAddUser(t *testing.T) {
 			Name: "-name-",
 			Id:   "-x-request-id-",
 			Hash: "UkFX",
+			Ulid: actual.Ulid,
 		}, actual)
 		r, err := base64.StdEncoding.DecodeString(actual.Hash)
 		assert.NoError(t, err)
