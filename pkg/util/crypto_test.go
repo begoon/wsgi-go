@@ -25,8 +25,8 @@ func TestGCM(t *testing.T) {
 }
 
 func TestOpen(t *testing.T) {
-	encrypted := "aes:Mzwp2NLkHPferlXX6uMI4H7jP+xiTTAJvoZ1zR/2pTGjbVp7xAN6m4k="
-	password := "ingress-t.h.i.s.i.s.v.e.r.y.s.e.c.u.r.e.-api"
+	encrypted := "aes:sYaV5b8+w7OMkZBInQCiPqaYc56ZjGIDD8OOSxrYQyXUe0Uc3Lb9I0U="
+	password := "-secret-"
 	assert.Equal(t, "All good?", Open(encrypted, password))
 }
 
