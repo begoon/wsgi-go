@@ -9,6 +9,9 @@ The endpoint is built and deployed automatically when its `main` branch is pushe
 To try out the following technologies (the list is being updated frequently):
 
 - [ ] MongoDB integration
+- [x] Hashing (SHA256, ...)
+- [x] GCM/AES encryption
+- [x] BASE64
 - [x] REST API development in Go
   - [x] unit testing (running test within the image build process under docker)
   - [x] parse the request parameters from the URL and body (JSON)
