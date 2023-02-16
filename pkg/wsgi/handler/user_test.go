@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -32,6 +33,13 @@ func TestAddUser(t *testing.T) {
 		if err := json.Unmarshal(rec.Body.Bytes(), &actual); err != nil {
 			panic(err)
 		}
-		assert.Equal(t, actual, User{Name: "-name-", Id: "-x-request-id-"})
+		assert.Equal(t, User{
+			Name: "-name-",
+			Id:   "-x-request-id-",
+			Hash: "UkFX",
+		}, actual)
+		r, err := base64.StdEncoding.DecodeString(actual.Hash)
+		assert.NoError(t, err)
+		assert.Equal(t, string(r), "RAW")
 	}
 }

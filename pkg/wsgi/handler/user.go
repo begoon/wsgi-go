@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/base64"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -9,6 +10,7 @@ import (
 type User struct {
 	Id   string `json:"id,omitempty"`
 	Name string `json:"name" swagger:"required"`
+	Hash string `json:"hash" swagger:"omitempty"`
 }
 
 func AddUserHandler(c echo.Context) error {
@@ -17,5 +19,6 @@ func AddUserHandler(c echo.Context) error {
 		return err
 	}
 	u.Id = c.Response().Header().Get("X-Request-Id")
+	u.Hash = base64.StdEncoding.EncodeToString([]byte("RAW"))
 	return c.JSON(http.StatusCreated, u)
 }
