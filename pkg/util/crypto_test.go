@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSHA256(t *testing.T) {
+func TestSha256(t *testing.T) {
 	r := Sha256("abc")
 	assert.Equal(t, 32, len(r))
 	h := hex.EncodeToString(r)
@@ -28,6 +28,12 @@ func TestOpen(t *testing.T) {
 	encrypted := "aes:sYaV5b8+w7OMkZBInQCiPqaYc56ZjGIDD8OOSxrYQyXUe0Uc3Lb9I0U="
 	password := "-secret-"
 	assert.Equal(t, "All good?", Open(encrypted, password))
+}
+
+func TestOpenWithoutPrefix(t *testing.T) {
+	plain := "-plain-"
+	password := "-secret-"
+	assert.Equal(t, "-plain-", Open(plain, password))
 }
 
 func TestSealOpen(t *testing.T) {
