@@ -3,6 +3,8 @@ package util
 import (
 	"embed"
 	"fmt"
+
+	"github.com/rs/zerolog/log"
 )
 
 func StringFS(b *[]byte, prefix string, fs embed.FS) {
@@ -10,7 +12,7 @@ func StringFS(b *[]byte, prefix string, fs embed.FS) {
 		for _, f := range p {
 			info, err := f.Info()
 			if err != nil {
-				panic(fmt.Sprintf("unable to read info of %v", f))
+				log.Fatal().Err(err).Msgf("unable to read info of %v", f)
 			}
 			path := prefix + "/" + f.Name()
 			if info.IsDir() {
@@ -20,7 +22,7 @@ func StringFS(b *[]byte, prefix string, fs embed.FS) {
 			}
 		}
 	} else {
-		panic("embed files not found")
+		log.Fatal().Err(err).Msgf("embed files not found")
 	}
 }
 

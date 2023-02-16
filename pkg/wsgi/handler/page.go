@@ -3,7 +3,6 @@ package handler
 import (
 	"bytes"
 	"embed"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -29,7 +28,8 @@ func PageHandler(c echo.Context) error {
 
 	var b bytes.Buffer
 	if err := tmpls.ExecuteTemplate(&b, page, &v); err != nil {
-		panic(fmt.Sprintf("%v: parsing %s", err, page))
+		log.Error().Err(err).Msgf("parsing %s", page)
+		return err
 	}
 	return c.String(http.StatusOK, b.String())
 }

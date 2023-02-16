@@ -25,7 +25,7 @@ func requestDumper(c echo.Context, reqBody, resBody []byte) {
 	req := map[string]interface{}{}
 	if len(reqBody) > 0 {
 		if err := json.Unmarshal(reqBody, &req); err != nil {
-			panic(err)
+			log.Error().Err(err).Msgf("unable to unmarshal request [%v]", string(reqBody))
 		}
 	}
 	log.Info().
@@ -113,7 +113,8 @@ func Serve(version string) {
 		AddParamPath(string(""), "cid", "client id")
 
 	r.GET("/api/panic", func(c echo.Context) error {
-		panic("PANIC")
+		log.Fatal().Msg("PANIC")
+		return nil
 	})
 
 	r.GET("/page/:page", handler.PageHandler).
