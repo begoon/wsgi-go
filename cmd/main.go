@@ -28,6 +28,10 @@ func main() {
 	}
 	log.Logger = log.With().Caller().Logger()
 
+	if os.Getenv("NICE") != "" {
+		log.Logger = log.Logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
+
 	log.Info().Msg("* zerolog initialized")
 
 	serve := len(os.Args) == 1

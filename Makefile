@@ -8,6 +8,9 @@ test:
 serve:
 	go run ./cmd
 
+build:
+	go build -o wsgi ./cmd
+
 docker-build:
 	docker build -t wsgi-go --platform linux/amd64 .
 	

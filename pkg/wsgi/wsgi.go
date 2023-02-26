@@ -28,10 +28,14 @@ func requestDumper(c echo.Context, reqBody, resBody []byte) {
 			log.Error().Err(err).Msgf("unable to unmarshal request [%v]", string(reqBody))
 		}
 	}
+	res := bytes.TrimSpace(resBody)
+	if len(res) == 0 {
+		res = []byte("{}")
+	}
 	log.Info().
 		Str("id", id).
 		Interface("request", req).
-		RawJSON("response", bytes.TrimSpace(resBody)).
+		RawJSON("response", res).
 		Msgf("REQUEST/RESPONSE")
 }
 
