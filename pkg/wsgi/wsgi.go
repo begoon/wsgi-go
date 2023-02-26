@@ -40,7 +40,7 @@ func requestDumperSkipper(c echo.Context) bool {
 	return !strings.Contains(u, "/api") || strings.Contains(u, "/docs")
 }
 
-var opened = []string{"/health", "/process"}
+var opened = []string{"/health", "/process", "/api/ws"}
 
 const apiKey = "secret"
 
@@ -56,6 +56,12 @@ func apiKeySkipper(c echo.Context) bool {
 		}
 	}
 	return false
+}
+
+func unpanic() {
+	if err := recover(); err != nil {
+		log.Error().Msgf("panic %v", err)
+	}
 }
 
 func Serve(version string) {
@@ -108,6 +114,9 @@ func Serve(version string) {
 	r.POST("/api/user", handler.AddUserHandler).
 		AddParamBody(handler.User{}, "body", "User object", true).
 		AddResponse(http.StatusCreated, "created successfully", nil, nil)
+
+	r.GET("/api/ws/text/:cid", handler.WebSocketTextHandler).
+		AddParamPath(string(""), "cid", "client id")
 
 	r.GET("/api/ws/:cid", handler.WebSocketHandler).
 		AddParamPath(string(""), "cid", "client id")

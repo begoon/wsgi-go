@@ -6,7 +6,7 @@ import (
 
 func Must[T any](r T, err error) T {
 	if err != nil {
-		log.Fatal().Err(err).Msg("Must")
+		log.Panic().Err(err).Msg("Must")
 	}
 	return r
 }

@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -12,10 +13,12 @@ import (
 func WebSocketClient() {
 	cid := os.Args[2]
 	host := os.Args[3]
-	url := strings.TrimSuffix(host, "/") + "/api/ws/" + cid
+	url := strings.TrimSuffix(host, "/") + "/api/ws/text/" + cid
 	fmt.Println("- connecting to", url)
 
-	c, _, err := websocket.DefaultDialer.Dial(url, nil)
+	h := http.Header{}
+	h.Add("X-Api-Key", "secret")
+	c, _, err := websocket.DefaultDialer.Dial(url, h)
 	if err != nil {
 		panic(err)
 	}

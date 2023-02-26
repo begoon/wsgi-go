@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package iproov.chiro;
+
+import "google/protobuf/struct.proto";
+
+option go_package = "./pkg/protocol";
+
+message AckMessage {
+  uint32 sequence_number = 1;
+}
+
+message CaptureResult {
+  // TODO Rename something line isSuccessful
+  bool result = 1; // Returns true if crops were successfully captured and stored
+  // Handle result for different capture type and handedness
+  bool padResult = 2; // Should this be tied into the result field or be seperate??
+  optional string failureReason = 3;
+}
+
+message ClientStart {
+  string userID = 1;
+  string make = 2;
+  string model = 3;
+  string deviceId = 4;
+  // TODO Implement string userId = 4;
+}
+
+// Do we need to specify required, NO!!! https://stackoverflow.com/a/61970757
+// Error handling??
+// When should we handle ssl for web socket connection?
+// Should the client or backend terminate? Client terminates connection after receiving CaptureResult or erroring
+// Update Miro board with Ack message
+// Make Url variable in harness
+// We don't need ack payload this for version 1
+// Make fields required
+// How do we notify backend that the client cancelled
+
+
+// Frames used for palm detection
+message PadFrame {
+  bytes image = 1; // As PNG
+  Size imageSize = 2;
+  repeated Landmark landmarks = 3; // Expect 21 landmarks
+  CaptureType captureType = 4;
+  Handedness handedness = 5;
+}
+
+// Single high quality frame used for finger print extraction
+message PalmSlab {
+  bytes image = 1; // As PNG for now
+  Size imageSize = 2; // Image dimension
+
+  repeated float qualityScores = 3; // Should expect 10 an array of size 10; Score of -1 means failed to calculate score; Needs backend size checks
+  repeated float nfiqScores = 4; // array of size 10; scores can also be -1; Need backend size checks
+  repeated Landmark landmarks = 5; // Expect array of size 21; Need to do backend checks
+  repeated Rect cropBounds = 6; // Expect array of size 4 or 1; Origin is top left and relative to image size
+  repeated int32 rotations = 7; // Expect array of 4 or 1 (Depends on capturetype);angle degrees, rotate about center; Maybe radians are better?
+  CaptureType captureType = 8;
+  Handedness handedness = 9;
+}
+
+message Landmark {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message Rect {
+  int32 left = 1;
+  int32 top = 2;
+  int32 right = 3;
+  int32 bottom = 4;
+}
+
+message Size {
+  int32 width = 1;
+  int32 height = 2;
+}
+
+enum Handedness {
+  LEFT = 0;
+  RIGHT = 1;
+}
+
+enum CaptureType {
+  FINGER = 0;
+  THUMB = 1;
+}
+
+enum EventType {
+  ACK = 0; // // TODO DO we need ack in this early stage?
+  CLIENT_START = 1; // ACK, we need to log Android ID
+  PAD_FRAMES = 2;
+  PALM_SLAB = 3;
+  CAPTURE_RESULT = 4;
+}
+
+message Envelope {
+  uint32 version = 1;
+  uint32 sequence_number = 2; // TODO required?? https://developers.google.com/protocol-buffers/docs/proto#specifying-rules
+  EventType event_type = 3;
+  oneof payload {
+    ClientStart clientStart = 4;
+    PalmSlab palmSlab = 5;
+    PadFrame padFrame = 6;
+    AckMessage ackMessage = 7;
+    CaptureResult captureResult = 9;
+  }
+}
