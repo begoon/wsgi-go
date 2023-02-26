@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/begoon/wsgi-go/pkg/client"
 	"github.com/begoon/wsgi-go/pkg/wsgi"
@@ -29,7 +30,10 @@ func main() {
 	log.Logger = log.With().Caller().Logger()
 
 	if os.Getenv("NICE") != "" {
-		log.Logger = log.Logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		log.Logger = log.Logger.Output(zerolog.ConsoleWriter{
+			Out:        os.Stderr,
+			TimeFormat: time.RFC3339,
+		})
 	}
 
 	log.Info().Msg("* zerolog initialized")
