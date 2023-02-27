@@ -32,4 +32,3 @@ docker-push:
 push:
 	git push origin main
 	git push iproov main
-

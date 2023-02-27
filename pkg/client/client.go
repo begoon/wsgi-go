@@ -33,10 +33,14 @@ func MakeRequest(url string, i int, ch chan<- string) {
 }
 
 func Must[T any](r T, err error) T {
+	Success(err)
+	return r
+}
+
+func Success(err error) {
 	if err != nil {
 		panic(err)
 	}
-	return r
 }
 
 func Client() {
